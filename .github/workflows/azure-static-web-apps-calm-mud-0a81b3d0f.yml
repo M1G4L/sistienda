@@ -3,15 +3,16 @@ name: Azure Static Web Apps CI/CD
 on:
   push:
     branches:
-      - main
+      - main  # Solo despliega cuando hay un push a la rama 'main'
   pull_request:
     types: [opened, synchronize, reopened, closed]
     branches:
-      - main
+      - main  # Se ejecuta cuando hay un PR dirigido a la rama 'main'
 
 jobs:
   build_and_deploy_job:
-    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
+    # Solo ejecuta el despliegue si hay un 'push' a la rama principal
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed' && github.event.pull_request.merged == true)
     runs-on: ubuntu-latest
     name: Build and Deploy Job
     steps:
@@ -19,21 +20,22 @@ jobs:
         with:
           submodules: true
           lfs: false
+
       - name: Build And Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_CALM_MUD_0A81B3D0F }}
-          repo_token: ${{ secrets.GITHUB_TOKEN }} # Used for Github integrations (i.e. PR comments)
+          repo_token: ${{ secrets.GITHUB_TOKEN }}  # Para integraciones de GitHub (por ejemplo, comentarios de PR)
           action: "upload"
-          ###### Repository/Build Configurations - These values can be configured to match your app requirements. ######
-          # For more information regarding Static Web App workflow configurations, please visit: https://aka.ms/swaworkflowconfig
-          app_location: "/" # App source code path
-          api_location: "." # Api source code path - optional
-          output_location: "." # Built app content directory - optional
-          ###### End of Repository/Build Configurations ######
+          ###### Repository/Build Configurations - Estos valores se pueden configurar según los requisitos de tu app. ######
+          app_location: "/"  # Ruta del código fuente de la aplicación
+          api_location: "."  # Ruta del código fuente de la API (opcional)
+          output_location: "."  # Directorio de contenido de la app construida (opcional)
+          ###### Fin de las configuraciones ######
 
   close_pull_request_job:
+    # Solo ejecuta este trabajo cuando el PR es cerrado
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
     runs-on: ubuntu-latest
     name: Close Pull Request Job
@@ -44,3 +46,4 @@ jobs:
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_CALM_MUD_0A81B3D0F }}
           action: "close"
+
