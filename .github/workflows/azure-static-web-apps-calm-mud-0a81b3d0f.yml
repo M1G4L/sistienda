@@ -3,7 +3,7 @@ name: Azure Static Web Apps CI/CD
 on:
   push:
     branches:
-      - main  # Solo despliega cuando hay un push a la rama 'main'
+      - main  # Solo despliega cuando haya un push a la rama 'main'
   pull_request:
     types: [opened, synchronize, reopened, closed]
     branches:
@@ -12,7 +12,7 @@ on:
 jobs:
   build_and_deploy_job:
     # Solo ejecuta el despliegue si hay un 'push' a la rama principal
-    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed' && github.event.pull_request.merged == true)
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     name: Build and Deploy Job
     steps:
@@ -46,4 +46,3 @@ jobs:
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_CALM_MUD_0A81B3D0F }}
           action: "close"
-
