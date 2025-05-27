@@ -4,10 +4,6 @@ on:
   push:
     branches:
       - main  # Solo despliega cuando haya un push a la rama 'main'
-  pull_request:
-    types: [opened, synchronize, reopened, closed]
-    branches:
-      - main  # Se ejecuta cuando hay un PR dirigido a la rama 'main'
 
 jobs:
   build_and_deploy_job:
@@ -35,7 +31,7 @@ jobs:
           ###### Fin de las configuraciones ######
 
   close_pull_request_job:
-    # Solo ejecuta este trabajo cuando el PR es cerrado
+    # No es necesario ejecutar este trabajo ya que no hay despliegue en el PR, solo se hace en push.
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
     runs-on: ubuntu-latest
     name: Close Pull Request Job
